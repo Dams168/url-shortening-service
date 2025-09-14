@@ -28,4 +28,30 @@ export default class UrlController {
             return res.status(500).json({ message: "Server Error", error: error.message });
         }
     }
+
+    static async retrieveOriginalUrl(req, res) {
+        try {
+            const { shortCode } = req.params;
+            const findUrl = await Url.findOneAndUpdate(
+                { shortCode: shortCode },
+                { $inc: { accessCount: 1 } },
+                { new: true }
+            );
+            if (!findUrl) {
+                return res.status(404).json({ message: "Short URL not found" });
+            }
+            return res.status(200).json({
+                message: "Original URL retrieved successfully",
+                data: {
+                    id: findUrl._id,
+                    url: findUrl.url,
+                    shortCode: findUrl.shortCode,
+                    createdAt: findUrl.createdAt,
+                    updatedAt: findUrl.updatedAt
+                }
+            });
+        } catch (error) {
+            return res.status(500).json({ message: "Server Error", error: error.message });
+        }
+    }
 };
