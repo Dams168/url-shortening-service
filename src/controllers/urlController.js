@@ -112,4 +112,26 @@ export default class UrlController {
             return res.status(500).json({ message: "Server Error", error: error.message });
         }
     }
+
+    static async deleteShortUrl(req, res) {
+        try {
+            const { shortCode } = req.params;
+            const deletedUrl = await Url.findOneAndDelete({ shortCode: shortCode });
+            if (!deletedUrl) {
+                return res.status(404).json({ message: "Short URL not found" });
+            }
+            return res.status(200).json({
+                message: "Short URL deleted successfully",
+                data: {
+                    id: deletedUrl._id,
+                    url: deletedUrl.url,
+                    shortCode: deletedUrl.shortCode,
+                    createdAt: deletedUrl.createdAt,
+                    updatedAt: deletedUrl.updatedAt
+                }
+            });
+        } catch (error) {
+            return res.status(500).json({ message: "Server Error", error: error.message });
+        }
+    }
 };
