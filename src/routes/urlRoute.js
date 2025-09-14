@@ -4,5 +4,6 @@ import UrlController from '../controllers/urlController.js';
 
 router.post('/shorten', UrlController.createShortUrl);
 router.get('/shorten/:shortCode', UrlController.retrieveOriginalUrl);
+router.put('/shorten/:shortCode', UrlController.updateShortUrl);
 
 export default router;

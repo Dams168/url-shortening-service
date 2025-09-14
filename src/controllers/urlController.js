@@ -54,4 +54,39 @@ export default class UrlController {
             return res.status(500).json({ message: "Server Error", error: error.message });
         }
     }
+
+    static async updateShortUrl(req, res) {
+        const { url } = req.body;
+        const { shortCode } = req.params;
+        try {
+            const updatedUrl = await Url.findOneAndUpdate(
+                { shortCode: shortCode },
+                {
+                    $set: {
+                        url: url,
+                        updatedAt: new Date()
+                    }
+                },
+                { new: true }
+            );
+            if (!updatedUrl) {
+                return res.status(404).json({ message: "Short URL not found" });
+            }
+            if (!url) {
+                return res.status(400).json({ message: "URL is required" });
+            }
+            return res.status(200).json({
+                message: "Short URL updated successfully",
+                data: {
+                    id: updatedUrl._id,
+                    url: updatedUrl.url,
+                    shortCode: updatedUrl.shortCode,
+                    createdAt: updatedUrl.createdAt,
+                    updatedAt: updatedUrl.updatedAt
+                }
+            });
+        } catch (error) {
+            return res.status(500).json({ message: "Server Error", error: error.message });
+        }
+    }
 };
