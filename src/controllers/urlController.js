@@ -89,4 +89,27 @@ export default class UrlController {
             return res.status(500).json({ message: "Server Error", error: error.message });
         }
     }
+
+    static async getUrlStats(req, res) {
+        try {
+            const { shortCode } = req.params;
+            const urlStats = await Url.findOne({ shortCode: shortCode });
+            if (!urlStats) {
+                return res.status(404).json({ message: "Short URL not found" });
+            }
+            return res.status(200).json({
+                message: "URL statistics retrieved successfully",
+                data: {
+                    id: urlStats._id,
+                    url: urlStats.url,
+                    shortCode: urlStats.shortCode,
+                    createdAt: urlStats.createdAt,
+                    updatedAt: urlStats.updatedAt,
+                    accessCount: urlStats.accessCount
+                }
+            });
+        } catch (error) {
+            return res.status(500).json({ message: "Server Error", error: error.message });
+        }
+    }
 };
